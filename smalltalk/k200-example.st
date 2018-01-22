@@ -38,3 +38,12 @@ k := someFunction value.
 
 Transcript cr.
 Transcript show: k; cr.
+
+"
+captured: a Continuation
+k is a Continuation
+captured: 200
+k is a SmallInteger
+
+200
+"

@@ -11,3 +11,9 @@ if (!(x instanceof Continuation)) {
     print(x);
     x('f');
 }
+
+/*
+[object Continuation]
+f
+és la lletra f
+*/

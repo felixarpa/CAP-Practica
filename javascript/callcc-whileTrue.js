@@ -3,8 +3,8 @@ Continuation.callcc = function(aBlock) {
 }
 
 x = 0;
-var lessThan3 = function() {
-    return x < 3;
+var lessThan6 = function() {
+    return x < 6;
 }
 var printAndIncrement = function() {
     print("x = " + x);
@@ -24,4 +24,13 @@ var whileTrue = function(booleanBlock, executionBlock) {
 
 }
 
-whileTrue(lessThan3, printAndIncrement);
+whileTrue(lessThan6, printAndIncrement);
+
+/*
+x = 0
+x = 1
+x = 2
+x = 3
+x = 4
+x = 5
+*/
