@@ -2,6 +2,16 @@ Continuation.callcc = function(aBlock) {
     return aBlock(new Continuation());
 }
 
+function thread(thunk) {
+    this.thunk = thunk;
+    this.isActive = false;
+}
+
+thread.prototype.activate = function() {
+    this.isActive = true;
+    this.cont(this.cont);
+}
+
 function thread_system() {
     this.threads = [];
 }
@@ -11,17 +21,13 @@ function make_thread_system() {
 }
 
 thread_system.prototype.spawn = function(thunk) {
-    var thread = {};
-    thread.thunk = thunk;
-    thread.isActive = false;
-    this.threads.push(thread);
+    this.threads.push(new thread(thunk));
 }
 
 thread_system.prototype.quit = function() {
     this.threads.shift();
     if (this.threads.length > 0) {
-        this.threads[0].isActive = true;
-        this.threads[0].cont(this.threads[0].cont);
+        this.threads[0].activate();
     } else {
         this.halt();
     }
@@ -47,8 +53,7 @@ thread_system.prototype.start_threads = function() {
     this.halt = Continuation.callcc(function(cc) { return cc });
 
     if (this.threads.length > 0) {
-        this.threads[0].isActive = true;
-        this.threads[0].cont(this.threads[0].cont);
+        this.threads[0].activate();
     }
 }
 
