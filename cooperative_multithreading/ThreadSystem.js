@@ -2,29 +2,29 @@ Continuation.callcc = function(aBlock) {
     return aBlock(new Continuation());
 }
 
-function thread(thunk) {
+function Thread(thunk) {
     this.thunk = thunk;
     this.isActive = false;
 }
 
-thread.prototype.activate = function() {
+Thread.prototype.activate = function() {
     this.isActive = true;
     this.cont(this.cont);
 }
 
-function thread_system() {
+function Thread_system() {
     this.threads = [];
 }
 
 function make_thread_system() {
-    return new thread_system();
+    return new Thread_system();
 }
 
-thread_system.prototype.spawn = function(thunk) {
-    this.threads.push(new thread(thunk));
+Thread_system.prototype.spawn = function(thunk) {
+    this.threads.push(new Thread(thunk));
 }
 
-thread_system.prototype.quit = function() {
+Thread_system.prototype.quit = function() {
     this.threads.shift();
     if (this.threads.length > 0) {
         this.threads[0].activate();
@@ -33,7 +33,7 @@ thread_system.prototype.quit = function() {
     }
 }
 
-thread_system.prototype.relinquish = function() {
+Thread_system.prototype.relinquish = function() {
     this.threads[0].isActive = false;
     this.threads[0].cont = Continuation.callcc(function(cc) { return cc; });
     if (!this.threads[0].isActive) {
@@ -42,7 +42,7 @@ thread_system.prototype.relinquish = function() {
     }
 }
 
-thread_system.prototype.start_threads = function() {
+Thread_system.prototype.start_threads = function() {
     this.threads.forEach(function(thread) {
         thread.cont = Continuation.callcc(function(cc) { return cc; });
         if (thread.isActive) {
