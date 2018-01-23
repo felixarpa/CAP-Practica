@@ -16,13 +16,9 @@ function Thread_system() {
     this.threads = [];
 }
 
-function make_thread_system() {
-    return new Thread_system();
-}
-
 Thread_system.prototype.spawn = function(thunk) {
     this.threads.push(new Thread(thunk));
-}
+};
 
 Thread_system.prototype.quit = function() {
     this.threads.shift();
@@ -31,7 +27,7 @@ Thread_system.prototype.quit = function() {
     } else {
         this.halt();
     }
-}
+};
 
 Thread_system.prototype.relinquish = function() {
     this.threads[0].isActive = false;
@@ -40,7 +36,7 @@ Thread_system.prototype.relinquish = function() {
         this.threads.push(this.threads[0]);
         this.quit();
     }
-}
+};
 
 Thread_system.prototype.start_threads = function() {
     this.threads.forEach(function(thread) {
@@ -55,12 +51,14 @@ Thread_system.prototype.start_threads = function() {
     if (this.threads.length > 0) {
         this.threads[0].activate();
     }
+};
+
+function make_thread_system() {
+    return new Thread_system();
 }
 
 
-
-
-
+// Counter example
 
 var counter = 10;
 function make_thread_thunk(name, thread_system) {
