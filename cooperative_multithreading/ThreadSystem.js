@@ -2,6 +2,10 @@ Continuation.callcc = function(aBlock) {
     return aBlock(new Continuation());
 }
 
+Continuation.current = function() {
+    return Continuation.callcc(function(cc) { return cc; });
+}
+
 function Thread(thunk) {
     this.thunk = thunk;
     this.isActive = false;
@@ -12,15 +16,15 @@ Thread.prototype.activate = function() {
     this.cont(this.cont);
 }
 
-function Thread_system() {
+function ThreadSystem() {
     this.threads = [];
 }
 
-Thread_system.prototype.spawn = function(thunk) {
+ThreadSystem.prototype.spawn = function(thunk) {
     this.threads.push(new Thread(thunk));
 };
 
-Thread_system.prototype.quit = function() {
+ThreadSystem.prototype.quit = function() {
     this.threads.shift();
     if (this.threads.length > 0) {
         this.threads[0].activate();
@@ -29,24 +33,24 @@ Thread_system.prototype.quit = function() {
     }
 };
 
-Thread_system.prototype.relinquish = function() {
+ThreadSystem.prototype.relinquish = function() {
     this.threads[0].isActive = false;
-    this.threads[0].cont = Continuation.callcc(function(cc) { return cc; });
+    this.threads[0].cont = Continuation.current()
     if (!this.threads[0].isActive) {
         this.threads.push(this.threads[0]);
         this.quit();
     }
 };
 
-Thread_system.prototype.start_threads = function() {
+ThreadSystem.prototype.start_threads = function() {
     this.threads.forEach(function(thread) {
-        thread.cont = Continuation.callcc(function(cc) { return cc; });
+        thread.cont = Continuation.current()
         if (thread.isActive) {
             thread.thunk();
         }
     });
 
-    this.halt = Continuation.callcc(function(cc) { return cc });
+    this.halt = Continuation.current()
 
     if (this.threads.length > 0) {
         this.threads[0].activate();
@@ -54,7 +58,7 @@ Thread_system.prototype.start_threads = function() {
 };
 
 function make_thread_system() {
-    return new Thread_system();
+    return new ThreadSystem();
 }
 
 
