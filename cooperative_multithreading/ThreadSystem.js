@@ -90,4 +90,35 @@ counter_thread_sys.start_threads();
 
 
 
+// Fibonacci example
 
+print("\nFIBONACCI(9)");
+TAG = "[NFIB]";
+
+var fibs = [];
+function make_fib_thunk(n, thread_system) {
+    function nFib() {
+        if (n <= 1) {
+            print(TAG, "Base case, Fibonacci(0) = 0, Fibonacci(1) = 1");
+            fibs[0] = 0;
+            fibs[1] = 1;
+            thread_system.quit();
+        } else {
+            print(TAG, "I don't have my previous Fibonacci values, need to spawn Fibonacci("
+                + (n - 1) + ") thunk");
+            thread_system.spawn(make_fib_thunk(n - 1, thread_system));
+            while (fibs[n - 1] === undefined || fibs[n - 2] === undefined) {
+                thread_system.relinquish();
+            }
+            fibs[n] = fibs[n - 1] + fibs[n - 2];
+            print(TAG, "n =", n, "| Fibonacci(" + n + ") =", fibs[n]);
+            thread_system.quit();
+        }
+    };
+    return nFib;
+}
+
+var fib_thread_sys = make_thread_system();
+fib_thread_sys.spawn(make_fib_thunk(9, fib_thread_sys));
+fib_thread_sys.start_threads();
+print(TAG, fibs);
