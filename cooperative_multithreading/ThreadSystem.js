@@ -21,8 +21,14 @@ function ThreadSystem() {
 }
 
 ThreadSystem.prototype.spawn = function(thunk) {
-    this.threads.push(new Thread(thunk));
+    var thread = new Thread(thunk)
+    this.threads.push(thread);
+    thread.cont = Continuation.current();
+    if (thread.isActive) {
+        thread.thunk();
+    }
 };
+
 
 ThreadSystem.prototype.quit = function() {
     this.threads.shift();
@@ -43,13 +49,6 @@ ThreadSystem.prototype.relinquish = function() {
 };
 
 ThreadSystem.prototype.start_threads = function() {
-    this.threads.forEach(function(thread) {
-        thread.cont = Continuation.current();
-        if (thread.isActive) {
-            thread.thunk();
-        }
-    });
-
     this.halt = Continuation.current();
 
     if (this.threads.length > 0) {
@@ -62,7 +61,13 @@ function make_thread_system() {
 }
 
 
+// Examples
+var TAG;
+
 // Counter example
+
+print("\nCOUNTER");
+TAG = "[LOOP]";
 
 var counter = 10;
 function make_thread_thunk(name, thread_system) {
@@ -70,17 +75,19 @@ function make_thread_thunk(name, thread_system) {
         if (counter < 0) {
             thread_system.quit();
         }
-        print('in thread',name,'; counter =',counter);
+        print(TAG, "in thread", name, "; counter =", counter);
         counter--;
         thread_system.relinquish();
         loop();
     };
     return loop;
 }
-var thread_sys = make_thread_system();
-thread_sys.spawn(make_thread_thunk('a', thread_sys));
-thread_sys.spawn(make_thread_thunk('b', thread_sys));
-thread_sys.spawn(make_thread_thunk('c', thread_sys));
-thread_sys.start_threads();
+var counter_thread_sys = make_thread_system();
+counter_thread_sys.spawn(make_thread_thunk('a', counter_thread_sys));
+counter_thread_sys.spawn(make_thread_thunk('b', counter_thread_sys));
+counter_thread_sys.spawn(make_thread_thunk('c', counter_thread_sys));
+counter_thread_sys.start_threads();
+
+
 
 
