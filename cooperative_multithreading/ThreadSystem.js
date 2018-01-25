@@ -3,7 +3,7 @@ Continuation.callcc = function(aBlock) {
 }
 
 Continuation.current = function() {
-    return Continuation.callcc(function(cc) { return cc; });
+    return Continuation.callcc((cc) => cc);
 }
 
 function Thread(thunk) {
@@ -35,7 +35,7 @@ ThreadSystem.prototype.quit = function() {
 
 ThreadSystem.prototype.relinquish = function() {
     this.threads[0].isActive = false;
-    this.threads[0].cont = Continuation.current()
+    this.threads[0].cont = Continuation.current();
     if (!this.threads[0].isActive) {
         this.threads.push(this.threads[0]);
         this.quit();
@@ -44,13 +44,13 @@ ThreadSystem.prototype.relinquish = function() {
 
 ThreadSystem.prototype.start_threads = function() {
     this.threads.forEach(function(thread) {
-        thread.cont = Continuation.current()
+        thread.cont = Continuation.current();
         if (thread.isActive) {
             thread.thunk();
         }
     });
 
-    this.halt = Continuation.current()
+    this.halt = Continuation.current();
 
     if (this.threads.length > 0) {
         this.threads[0].activate();
