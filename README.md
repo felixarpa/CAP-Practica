@@ -1,5 +1,7 @@
 # Thread System
 
+> **Fèlix Arribas Pardo** i **Carlota Catot Bragós**
+
 Per dur a terme la pràctica, el que vam començar fent va ser escriure i entendre bé que feia cada una de les funcions que es necessitaven:
 
 #### Spawn
