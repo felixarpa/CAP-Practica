@@ -29,7 +29,6 @@ ThreadSystem.prototype.spawn = function(thunk) {
     }
 };
 
-
 ThreadSystem.prototype.quit = function() {
     this.threads.shift();
     if (this.threads.length > 0) {
@@ -61,7 +60,8 @@ function make_thread_system() {
 }
 
 
-// Examples
+
+// EXAMPLES
 var TAG;
 
 // Counter example
@@ -99,12 +99,14 @@ var fibs = [];
 function make_fib_thunk(n, thread_system) {
     function nFib() {
         if (n <= 1) {
-            print(TAG, "Base case, Fibonacci(0) = 0, Fibonacci(1) = 1");
+            print(TAG, "Base case:");
+            print("         Fibonacci(0) = 0");
+            print("         Fibonacci(1) = 1");
             fibs[0] = 0;
             fibs[1] = 1;
             thread_system.quit();
         } else {
-            print(TAG, "I don't have my previous Fibonacci values, need to spawn Fibonacci("
+            print(TAG, "No previous Fibonacci values, spawn Fibonacci("
                 + (n - 1) + ") thunk");
             thread_system.spawn(make_fib_thunk(n - 1, thread_system));
             while (fibs[n - 1] === undefined || fibs[n - 2] === undefined) {
